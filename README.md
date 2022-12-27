@@ -33,3 +33,20 @@
 ```
 $ python3 compare.py input.txt scores.txt
 ```
+
+Пример файла ввода:
+
+```
+files/base.py plagiat1/base.py
+files/vmf.py plagiat2/vmf.py
+```
+
+Пример файла вывода:
+
+```
+0.123
+0.0
+Looks like the files first.py or second.py are missing.
+There's been a problem with analyzing third.py and forth.py files.
+0.781
+```

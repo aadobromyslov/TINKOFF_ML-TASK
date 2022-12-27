@@ -15,11 +15,29 @@ def main():
             first_compared_file, second_compared_file = line.split()
             with open(args.output_file, 'a') as w_file:
                 try:
-                    print(round(comparing(first_compared_file, second_compared_file), 3), file=w_file)
+                    print(
+                        round(
+                            comparing(
+                                first_compared_file,
+                                second_compared_file),
+                            3),
+                        file=w_file)
                 except FileNotFoundError:
-                    print("The files " + first_compared_file + ' or ' + second_compared_file + ' are missing.', file=w_file)
-                except:
-                    print("There's been a problem with analyzing " + first_compared_file + ' and ' + second_compared_file + ' files.', file=w_file)
+                    print(
+                        "Looks like the files " +
+                        first_compared_file +
+                        ' or ' +
+                        second_compared_file +
+                        ' are missing.',
+                        file=w_file)
+                except BaseException:
+                    print(
+                        "There's been a problem with analyzing " +
+                        first_compared_file +
+                        ' and ' +
+                        second_compared_file +
+                        ' files.',
+                        file=w_file)
 
 
 def comparing(first_file, second_file):
@@ -55,7 +73,8 @@ def clean_single_quotes(code):
 
 
 def clean_single_comments(code):
-    return re.sub("'''.*?'''", '', clean_double_comments(code), flags=re.DOTALL)
+    return re.sub("'''.*?'''", '',
+                  clean_double_comments(code), flags=re.DOTALL)
 
 
 def clean_double_comments(code):
@@ -75,7 +94,8 @@ def levenshtein_dist(first_str, second_str):
             if first_str[i - 1] == second_str[j - 1]:
                 matrix[i][j] = matrix[i - 1][j - 1]
             else:
-                matrix[i][j] = min(matrix[i - 1][j], matrix[i][j - 1], matrix[i - 1][j - 1]) + 1
+                matrix[i][j] = min(matrix[i - 1][j], matrix[i]
+                                   [j - 1], matrix[i - 1][j - 1]) + 1
     return matrix[len_first][len_second] / max(len_first, len_second)
 
 
