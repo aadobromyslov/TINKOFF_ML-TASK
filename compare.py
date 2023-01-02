@@ -9,6 +9,8 @@ def main():
     parser.add_argument('input_file')
     parser.add_argument('output_file')
     args = parser.parse_args()
+    disclaimer(args.output_file)
+    print("\nThe process has been started.\n\nProcessing...\n")
     open(args.output_file, 'w')
     with open(args.input_file, 'r') as r_file:
         for line in r_file:
@@ -38,20 +40,35 @@ def main():
                         second_compared_file +
                         ' files.',
                         file=w_file)
+    print("The process has been finished.\n")
+
+
+def disclaimer(output_file):
+    check_flag = input(
+        "\nThe " +
+        output_file +
+        " file is going to be overwritten. Do you want to proceed?\n" +
+        "Type Y if you do; type N otherwise.\n\n").lower()
+    if check_flag == 'n':
+        print("\nYou have decided to stop the program.\n")
+        exit(0)
+    elif check_flag != 'y':
+        disclaimer(output_file)
 
 
 def comparing(first_file, second_file):
     first_str = cleaning(first_file)
     second_str = cleaning(second_file)
-    score = levenshtein_dist(first_str, second_str)
-    return score
+    return levenshtein_dist(first_str, second_str)
 
 
 def cleaning(filename):
     parsed = ast.parse(open(filename).read())
     clean_names(parsed)
     cleaned = ast.unparse(parsed)
-    return clean_comments(cleaned)
+    cleaned = clean_comments(cleaned)
+    cleaned = clean_strings(cleaned)
+    return clean_blanks(cleaned)
 
 
 def clean_names(ast_code):
@@ -60,16 +77,12 @@ def clean_names(ast_code):
             node.id = 'a'
 
 
+def clean_blanks(code):
+    return re.sub(' + ', ' ', code)
+
+
 def clean_comments(code):
-    return re.sub('#.*', '', clean_double_quotes(code))
-
-
-def clean_double_quotes(code):
-    return re.sub('".*?"', '', clean_single_quotes(code), flags=re.DOTALL)
-
-
-def clean_single_quotes(code):
-    return re.sub("'.*?'", '', clean_single_comments(code), flags=re.DOTALL)
+    return re.sub('#.*', '', clean_single_comments(code))
 
 
 def clean_single_comments(code):
@@ -79,6 +92,14 @@ def clean_single_comments(code):
 
 def clean_double_comments(code):
     return re.sub('""".*?"""', '', code, flags=re.DOTALL)
+
+
+def clean_strings(code):
+    return re.sub('".*?"', "''", clean_single_strings(code), flags=re.DOTALL)
+
+
+def clean_single_strings(code):
+    return re.sub("'.*?'", "''", code, flags=re.DOTALL)
 
 
 def levenshtein_dist(first_str, second_str):
